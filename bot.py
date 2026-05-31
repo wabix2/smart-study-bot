@@ -1,7 +1,7 @@
 """
 Smart Study Hub Bot — Telegram bot for @SmartStudyHub
 Features: Scheduled study tips, AI-generated quizzes, manual triggers
-AI: Google Gemini (free tier — no credit card needed)
+AI: Google Gemini (free tier — no credit card needed) and it was built with passion from meeeee
 """
 
 import os
@@ -21,19 +21,14 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
+# ── Config ────────────────────────────────────────────────────────────────────
 TELEGRAM_TOKEN  = os.environ["TELEGRAM_BOT_TOKEN"]
 CHANNEL_ID      = os.environ["TELEGRAM_CHANNEL_ID"]
 GEMINI_API_KEY  = os.environ["GEMINI_API_KEY"]
-GEMINI_URL = (
-    "https://generativelanguage.googleapis.com/v1beta/models/"
-    "gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY
-    if GEMINI_API_KEY else ""
-)
 
 # ── AI helper ─────────────────────────────────────────────────────────────────
 
 async def ask_gemini(prompt: str) -> str:
-    """Call Gemini 2.0 Flash and return text response."""
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
         f"gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
@@ -179,7 +174,7 @@ async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-def main():
+async def main():
     app = Application.builder().token(TELEGRAM_TOKEN).build()
 
     app.add_handler(CommandHandler("start",  cmd_start))
@@ -198,7 +193,7 @@ def main():
     app.job_queue.run_daily(
         job_weekly_quiz,
         time=time(hour=10, minute=0),
-        days=(0,),  # 0 = Monday
+        days=(0,),
         name="weekly_quiz",
     )
 
@@ -207,4 +202,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import asyncio
+    asyncio.run(main())
